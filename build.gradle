@@ -1,0 +1,34 @@
+plugins {
+    id 'org.springframework.boot' version '3.1.3'
+    id("java")
+}
+
+group = "com.x"
+version = "1.0-SNAPSHOT"
+sourceCompatibility = '17'
+
+
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+
+    implementation platform('org.springframework.boot:spring-boot-dependencies:3.1.3')
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.hibernate.validator:hibernate-validator:6.0.21.Final'
+
+
+    // test
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test', Test) {
+    useJUnitPlatform()
+}
+

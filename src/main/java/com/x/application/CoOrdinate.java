@@ -1,4 +1,4 @@
-package application;
+package com.x.application;
 
 public record CoOrdinate(String s) {
     public CoOrdinate {

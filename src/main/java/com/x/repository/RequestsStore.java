@@ -1,4 +1,4 @@
-package repository;
+package com.x.repository;
 
 import java.time.Instant;
 
