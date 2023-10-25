@@ -1,9 +1,12 @@
-package com.x.application;
+package com.x.weather.adapters.api;
 
 
 import com.x.domain.GeoLocationAdapter;
 import com.x.domain.MetricResult;
 import com.x.domain.WeatherAdapter;
+import com.x.weather.CoOrdinate;
+import com.x.weather.History;
+import com.x.weather.Metric;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.websocket.server.PathParam;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +17,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 import java.time.Instant;
-import java.util.Optional;
 
 @Controller("/api/v1/weather")
 @Validated
-public class WeatherEndpoint {
+class WeatherEndpoint {
 
     private final WeatherAdapter weatherAdapter;
     private final GeoLocationAdapter geoLocationAdapter;

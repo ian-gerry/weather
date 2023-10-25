@@ -1,4 +1,4 @@
-package com.x.application;
+package com.x.weather;
 
 
 import java.time.Instant;

@@ -1,7 +1,6 @@
-package com.x.application.provider.openweather;
+package com.x.weather.provider.openweather;
 
-import com.x.application.CoOrdinate;
-import com.x.application.provider.openweather.OpenWeatherHttpDataSource;
+import com.x.weather.CoOrdinate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

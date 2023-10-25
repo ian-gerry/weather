@@ -1,6 +1,5 @@
-package com.x.application;
+package com.x.weather;
 
-import com.x.application.CoOrdinate;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

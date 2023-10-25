@@ -1,6 +1,6 @@
 package com.x.domain;
 
-import com.x.application.CoOrdinate;
+import com.x.weather.CoOrdinate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

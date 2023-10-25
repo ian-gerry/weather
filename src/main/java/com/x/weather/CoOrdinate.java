@@ -1,4 +1,4 @@
-package com.x.application;
+package com.x.weather;
 
 public record CoOrdinate(String s) {
     public CoOrdinate {

@@ -1,6 +1,6 @@
-package com.x.application.provider.openweather;
+package com.x.weather.provider.openweather;
 
-import com.x.application.provider.ProviderResponseParser;
+import com.x.weather.provider.ProviderResponseParser;
 import com.x.domain.MetricResult;
 import org.springframework.stereotype.Component;
 

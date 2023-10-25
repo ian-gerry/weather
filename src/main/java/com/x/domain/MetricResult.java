@@ -1,6 +1,6 @@
 package com.x.domain;
 
-import com.x.application.Metric;
+import com.x.weather.Metric;
 
 public record  MetricResult (Metric metric, String value){
 }

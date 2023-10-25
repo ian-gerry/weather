@@ -1,8 +1,8 @@
 package com.x.domain;
 
-import com.x.application.CoOrdinate;
-import com.x.application.Metric;
-import com.x.application.provider.WeatherDataSource;
+import com.x.weather.CoOrdinate;
+import com.x.weather.Metric;
+import com.x.weather.provider.WeatherDataSource;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

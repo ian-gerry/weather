@@ -1,4 +1,4 @@
-package com.x.application.provider;
+package com.x.weather.provider;
 
 import com.x.domain.MetricResult;
 
