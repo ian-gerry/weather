@@ -1,6 +1,8 @@
 package com.x.domain;
 
-import com.x.weather.CoOrdinate;
+import com.x.domain.model.Location;
+import com.x.domain.model.MetricResult;
+import com.x.domain.ports.WeatherProviderPort;
 import com.x.weather.Metric;
 import com.x.weather.provider.WeatherDataSource;
 import org.springframework.stereotype.Component;
@@ -10,7 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Component
-public class WeatherMetricAggregator implements WeatherAdapter {
+public class WeatherMetricAggregator implements WeatherProviderPort {
 
     private final WeatherDataSource weatherDataSource;
 
@@ -20,9 +22,9 @@ public class WeatherMetricAggregator implements WeatherAdapter {
 
 
     @Override
-    public Optional<MetricResult> getMetric(Metric metric, int period, CoOrdinate longitude, CoOrdinate latitude) {
+    public Optional<MetricResult> getMetric(Metric metric, int period, Location location) {
         if (Objects.requireNonNull(metric) == Metric.MAX_TEMP) {
-            return getMaxTempFromProvider(period, longitude, latitude);
+            return getMaxTempFromProvider(period,location);
         }
         throw new UnsupportedOperationException("Other metrics not yet implemented");
     }
@@ -30,10 +32,9 @@ public class WeatherMetricAggregator implements WeatherAdapter {
     /**
      * warmest day over the next 5 days.
      */
+    Optional<MetricResult> getMaxTempFromProvider(int period, Location location){
 
-    Optional<MetricResult> getMaxTempFromProvider(int period, CoOrdinate longitude, CoOrdinate latitude){
-
-         List<MetricResult> metricResults =  weatherDataSource.queryForDaily(longitude,latitude);
+         List<MetricResult> metricResults =  weatherDataSource.queryForDaily(location);
 
 
          return Optional.empty();  //TODO:

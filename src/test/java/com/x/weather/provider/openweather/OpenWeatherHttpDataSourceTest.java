@@ -1,5 +1,6 @@
 package com.x.weather.provider.openweather;
 
+import com.x.domain.model.Location;
 import com.x.weather.CoOrdinate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +15,9 @@ class OpenWeatherHttpDataSourceTest {
     @Autowired
     private OpenWeatherHttpDataSource openWeatherHttpDataSource;
 
-    private static final CoOrdinate LONG = new CoOrdinate("10.99");
-    private static final CoOrdinate LAT = new CoOrdinate("44.34");
-
     @Test
     void query() {
-        assertTrue(!openWeatherHttpDataSource.makeHttpRequestToOpenWeatherApi(LONG, LAT).isEmpty());
+        Location location = new Location("10.99","44.34");
+        assertTrue(!openWeatherHttpDataSource.makeHttpRequestToOpenWeatherApi(location).isEmpty());
     }
 }

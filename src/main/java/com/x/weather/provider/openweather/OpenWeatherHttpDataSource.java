@@ -1,17 +1,16 @@
 package com.x.weather.provider.openweather;
 
+import com.x.domain.model.Location;
 import com.x.weather.CoOrdinate;
 import com.x.weather.provider.WeatherDataSource;
-import com.x.domain.MetricResult;
+import com.x.domain.model.MetricResult;
 import feign.Feign;
 import feign.okhttp.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -36,19 +35,17 @@ public class OpenWeatherHttpDataSource implements WeatherDataSource {
 
 
     @Override
-    public List<MetricResult> queryForDaily(CoOrdinate longitude, CoOrdinate latitude) {
-        return openWeatherResponseParser.parse(makeHttpRequestToOpenWeatherApi(longitude,latitude));
+    public List<MetricResult> queryForDaily(Location location) {
+        return openWeatherResponseParser.parse(makeHttpRequestToOpenWeatherApi(location));
     }
 
-    protected String makeHttpRequestToOpenWeatherApi(CoOrdinate longitude, CoOrdinate latitude){
+    protected String makeHttpRequestToOpenWeatherApi(Location location){
         try {
             OpenWeatherClient openWeatherClient = Feign.builder()
                     .client(new OkHttpClient())
                     .target(OpenWeatherClient.class, serviceURL);
-            OpenWeatherSummary weatherSummary = openWeatherClient
-                    .getForecast(latitude.toString(),longitude.toString(),apiKey);
-
-            return "to do";
+            return openWeatherClient
+                    .getForecast(location.latitude(), location.longitude(), apiKey);
         }catch (Exception ex){
             log.error("Failed OpenWeather request. "+ex.getMessage());
             throw new RuntimeException("Failed when trying to query OpenWeather API",ex);

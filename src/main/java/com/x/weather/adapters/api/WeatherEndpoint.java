@@ -1,9 +1,7 @@
 package com.x.weather.adapters.api;
 
 
-import com.x.domain.GeoLocationAdapter;
-import com.x.domain.MetricResult;
-import com.x.domain.WeatherAdapter;
+import com.x.domain.model.MetricResult;
 import com.x.weather.CoOrdinate;
 import com.x.weather.History;
 import com.x.weather.Metric;
@@ -20,15 +18,15 @@ import java.time.Instant;
 
 @Controller("/api/v1/weather")
 @Validated
+/**
+ * Driver adapter for obtaining weather
+ */
 class WeatherEndpoint {
 
-    private final WeatherAdapter weatherAdapter;
-    private final GeoLocationAdapter geoLocationAdapter;
+    private final WeatherServiceApi weatherServiceApi;
 
-
-    public WeatherEndpoint(WeatherAdapter weatherAdapter, GeoLocationAdapter geoLocationAdapter){
-        this.weatherAdapter=weatherAdapter;
-        this.geoLocationAdapter=geoLocationAdapter;
+    WeatherEndpoint(WeatherServiceApi weatherServiceApi){
+        this.weatherServiceApi=weatherServiceApi;
     }
 
     @GetMapping("/location/{longitude}/{latitude}")
@@ -37,11 +35,11 @@ class WeatherEndpoint {
         try{
             CoOrdinate longitude = new CoOrdinate(longitudeString);
             CoOrdinate latitude =  new CoOrdinate(latitudeString);
-            if(geoLocationAdapter.withinAllowedRegion(longitude,latitude)){
+            if(weatherServiceApi.withinAllowedRegion(longitude,latitude)){
                 ResponseEntity.badRequest().build();
             }
 
-            return weatherAdapter.getMetric(Metric.MAX_TEMP,5, longitude,latitude)
+            return weatherServiceApi.getMetric(Metric.MAX_TEMP,5, longitude,latitude)
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
         }catch(IllegalArgumentException ex){
