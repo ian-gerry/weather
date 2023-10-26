@@ -7,9 +7,7 @@ import java.util.List;
 public interface ProviderResponseParser {
 
     /**
-     * Convert provider supplied String into a collection of Metric results
-     * @param s
-     * @return
+     * Convert provider supplied payload String into a collection of Metric results
      */
     List<MetricResult> parse(String s);
 }

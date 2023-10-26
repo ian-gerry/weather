@@ -1,43 +1,70 @@
-package com.x.weather.provider.openweather;
+package com.x.weather.adapters.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.x.weather.Metric;
+import com.x.weather.provider.openweather.OpenWeatherHttpDataSourcePort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.util.UriTemplate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.net.URI;
 
-class OpenWeatherResponseParserTest {
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@SpringBootTest
+@AutoConfigureMockMvc
+class WeatherEndpointTest {
 
-    OpenWeatherResponseParser parser;
+    private final static String TEMPLATE  = "/api/v1/weather/location/{longitude}/{latitude}";
+    private final static UriTemplate URI_TEMPLATE = new UriTemplate(TEMPLATE);
+    @Autowired
+    private MockMvc mockMvc;
 
     @BeforeEach
-    void init(){
-        parser = new OpenWeatherResponseParser(new ObjectMapper());
+    void init() {
+
+        //TODO: Add fixture for OpenWeather response to have test stability
     }
 
     @Test
-    void validListOfWeatherItemsExtractsAllMetricResults(){
-        assertEquals(10, parser.parse(apiResponse()).size());
+    public void shouldReturn200OKForValidLocation() throws Exception {
+
+        URI uri = URI_TEMPLATE.expand("44.34","10.99");
+        this.mockMvc.perform(get(uri)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.dateUTC").isNotEmpty())
+                .andExpect(jsonPath("$.metric").value("MAX_TEMP"))
+        ;
     }
 
     @Test
-    void validListOfWeatherItemsExtractsMaxTemperature(){
-        assertTrue(parser.parse(apiResponse()).stream().anyMatch(p-> Metric.MAX_TEMP.equals(p.metric()))) ;
+    public void shouldReturn400ForMissingGeoCoordinateInURL() throws Exception {
+
+        this.mockMvc.perform(get(URI_TEMPLATE.expand("","1"))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
+
+        this.mockMvc.perform(get(URI_TEMPLATE.expand("1",""))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
+
+        this.mockMvc.perform(get(URI_TEMPLATE.expand("",""))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
     }
 
-    @Test
-    void validListOfWeatherItemsExtractsHumidity(){
-        assertTrue(parser.parse(apiResponse()).stream().anyMatch(p-> Metric.HUMIDITY.equals(p.metric()))) ;
-    }
 
-    @Test
-    void validListOfWeatherItemsExtractsDate(){
-        assertTrue(parser.parse(apiResponse()).stream().allMatch(p-> p.time()>0 )) ;
-    }
 
-    private String apiResponse(){
+    private String dummyOpenWeatherApiResponse(){
         return
                 "{\n" +
                         "    \"cod\": \"200\",\n" +

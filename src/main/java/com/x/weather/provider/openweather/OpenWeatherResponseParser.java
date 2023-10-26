@@ -10,6 +10,11 @@ import com.x.weather.provider.openweather.model.OpenWeatherDayItem;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,12 +49,22 @@ public class OpenWeatherResponseParser implements ProviderResponseParser {
                 .readValue(jsonNodeItems);
         return items.stream()
                 .flatMap(ow -> {
-                    var metrics = List.of(new MetricResult(ow.dt(),Metric.MAX_TEMP, ow.main().temp_max()),
-                            new MetricResult(ow.dt(),Metric.HUMIDITY, ow.main().humidity()));
+                            var date = parseDate(ow.dt_txt());
+                            var metrics = List.of(new MetricResult(date, ow.dt(),Metric.MAX_TEMP, ow.main().temp_max()),
+                            new MetricResult(date,ow.dt(),Metric.HUMIDITY, ow.main().humidity()));
                     return metrics.stream();
                 }
                 )
                 .collect(Collectors.toList());
+    }
+
+    private LocalDate parseDate(String s){
+        String[] parts = s.split(" ");
+        if(parts.length!=2){
+            throw new RuntimeException("Provider has supplied badly formatted dates " + s);
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return LocalDate.parse(parts[0],formatter);
     }
 
 }

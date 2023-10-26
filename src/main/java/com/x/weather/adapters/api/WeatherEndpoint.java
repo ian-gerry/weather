@@ -7,21 +7,23 @@ import com.x.weather.History;
 import com.x.weather.Metric;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.websocket.server.PathParam;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 
 import java.time.Instant;
 
-@Controller("/api/v1/weather")
+
+@RestController
+@RequestMapping("/api/v1/weather")
 @Validated
 /**
  * Driver adapter for obtaining weather
  */
-class WeatherEndpoint {
+public class WeatherEndpoint {
 
     private final WeatherServiceApi weatherServiceApi;
 
@@ -29,21 +31,35 @@ class WeatherEndpoint {
         this.weatherServiceApi=weatherServiceApi;
     }
 
-    @GetMapping("/location/{longitude}/{latitude}")
-    public ResponseEntity<MetricResult> maxForPreviousPeriod(@NotBlank @PathParam("longitude") String longitudeString,
-                                                       @NotBlank @PathParam("latitude") String latitudeString){
-        try{
+    @GetMapping("/ping")
+    public ResponseEntity<String> ping() {
+        return
+                ResponseEntity.status(HttpStatus.OK)
+                        .body("ok");
+    }
+
+
+    @GetMapping("/location/{latitude}/{longitude}")
+    public ResponseEntity<MetricResult> maxTemperatureForPeriod(
+            @NotBlank @PathVariable("latitude") String latitudeString,
+            @NotBlank @PathVariable("longitude") String longitudeString) {
+
+        try {
             CoOrdinate longitude = new CoOrdinate(longitudeString);
-            CoOrdinate latitude =  new CoOrdinate(latitudeString);
-            if(weatherServiceApi.withinAllowedRegion(longitude,latitude)){
-                ResponseEntity.badRequest().build();
+            CoOrdinate latitude = new CoOrdinate(latitudeString);
+            if (!weatherServiceApi.withinAllowedRegion(longitude, latitude)) {
+                ResponseEntity.badRequest()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .build();
             }
 
-            return weatherServiceApi.getMetric(Metric.MAX_TEMP,5, longitude,latitude)
+            return weatherServiceApi.getMetric(Metric.MAX_TEMP, 5, longitude, latitude)
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
-        }catch(IllegalArgumentException ex){
-            return ResponseEntity.badRequest().build();
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .build();
         }
     }
 

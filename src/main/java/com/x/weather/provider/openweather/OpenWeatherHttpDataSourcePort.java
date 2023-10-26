@@ -1,8 +1,7 @@
 package com.x.weather.provider.openweather;
 
 import com.x.domain.model.Location;
-import com.x.weather.CoOrdinate;
-import com.x.weather.provider.WeatherDataSource;
+import com.x.weather.provider.WeatherDataSourcePort;
 import com.x.domain.model.MetricResult;
 import feign.Feign;
 import feign.okhttp.OkHttpClient;
@@ -16,9 +15,9 @@ import java.util.List;
 
 
 @Component
-public class OpenWeatherHttpDataSource implements WeatherDataSource {
+public class OpenWeatherHttpDataSourcePort implements WeatherDataSourcePort {
 
-    private static Logger log = LoggerFactory.getLogger(OpenWeatherHttpDataSource.class);
+    private static Logger log = LoggerFactory.getLogger(OpenWeatherHttpDataSourcePort.class);
 
     @Value("${provider.openweather.apikey}")
     private String apiKey;
@@ -29,7 +28,7 @@ public class OpenWeatherHttpDataSource implements WeatherDataSource {
     private final OpenWeatherResponseParser openWeatherResponseParser;
 
 
-    public OpenWeatherHttpDataSource(OpenWeatherResponseParser openWeatherResponseParser){
+    public OpenWeatherHttpDataSourcePort(OpenWeatherResponseParser openWeatherResponseParser){
        this.openWeatherResponseParser = openWeatherResponseParser;
     }
 
@@ -39,7 +38,7 @@ public class OpenWeatherHttpDataSource implements WeatherDataSource {
         return openWeatherResponseParser.parse(makeHttpRequestToOpenWeatherApi(location));
     }
 
-    protected String makeHttpRequestToOpenWeatherApi(Location location){
+    public String makeHttpRequestToOpenWeatherApi(Location location){
         try {
             OpenWeatherClient openWeatherClient = Feign.builder()
                     .client(new OkHttpClient())

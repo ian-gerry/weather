@@ -2,5 +2,7 @@ package com.x.domain.model;
 
 import com.x.weather.Metric;
 
-public record  MetricResult (long date, Metric metric, Double value){
+import java.time.LocalDate;
+
+public record  MetricResult (LocalDate dateUTC, long time, Metric metric, Double value){
 }
