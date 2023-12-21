@@ -4,5 +4,5 @@ import java.time.Instant;
 
 public interface RequestsStorePort {
 
-    long write(Instant instant, String verb);
+    long write(Instant instant, String verb, String ip, String uri);
 }
